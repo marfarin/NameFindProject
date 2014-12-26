@@ -15,7 +15,7 @@
 	"classmap":[
 	    "src/Finders",
             "src/DB",
-            "lib/phpmorphy/src/common.php"
+            "lib/phpmorphy/src"
 	]
     }
 }
