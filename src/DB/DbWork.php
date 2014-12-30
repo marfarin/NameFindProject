@@ -8,64 +8,46 @@
 
 namespace NameFindProject\src\DB;
 
+use NameFindProject\src\DB\ConnectDb;
+
 /**
  * Description of DB
  *
  * @author stager3
  */
+
+
 class DbWork
 {
-    private static $instance;
-    private static $connectDb;
-    public function __construct()
-    {
-    }
-    
-    public static function instance($config)
-    {
-        if (self::$instance==null) {
-            self::$instance = new self();
-            self::init($config);
-        } else {
-            return self::$instance;
-        }
-    }
-    
-    public static function init($config)
-    {
-        echo get_include_path();
-        try {
-            self::$connectDb = new \PDO(
-                'mysql:host='.$config['host'].';dbname='.$config['dbname'].'',
-                $config['username'],
-                $config['password'],
-                $config['options']
-            );
-        } catch (Exception $ex) {
-            print "Error!: " . $ex->getMessage() . "<br/>";
-            //die();
-        }
-    }
-    
+    /**
+     * @param type $articleId
+     * @return type
+     */
     public static function selectOneArticle($articleId)
     {
-        return self::$connectDb->query(
+        return ConnectDb::mySql()->query(
             "SELECT * FROM `news` t1 WHERE t1.id = '$articleId' LIMIT 1",
             \PDO::FETCH_ASSOC
         )->fetchAll()[0];
     }
-    
+    /**
+     * @return type
+     */
     public static function selectAllArticle()
     {
-        return self::$connectDb->query(
+        return ConnectDb::mySql()->query(
             "SELECT * FROM `news`",
             \PDO::FETCH_ASSOC
         )->fetchAll();
     }
-    
+    /**
+     * @param type $minId
+     * @param type $maxId
+     * @return type
+     */
     public static function selectRangeArticle($minId, $maxId)
     {
-        return self::$connectDb->query(
+        return ConnectDb::mySql()->query(
             "SELECT * FROM `news` t1 WHERE t1.id > '$minId' AND t1.id < '$maxId' LIMIT 1",
             \PDO::FETCH_ASSOC
         )->fetchAll();
