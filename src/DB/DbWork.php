@@ -48,7 +48,7 @@ class DbWork
     public static function selectRangeArticle($minId, $maxId)
     {
         return ConnectDb::mySql()->query(
-            "SELECT * FROM `news` t1 WHERE t1.id > '$minId' AND t1.id < '$maxId' LIMIT 1",
+            "SELECT * FROM `news` t1 WHERE t1.id > '$minId' AND t1.id < '$maxId'",
             \PDO::FETCH_ASSOC
         )->fetchAll();
     }

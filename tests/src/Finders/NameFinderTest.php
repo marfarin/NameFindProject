@@ -33,6 +33,6 @@ class NameFinderTest extends \PHPUnit_Framework_TestCase
     
     public function test()
     {
-        $this->assertEquals(array("Ольга Германовна Кирьянова"=>2), $this->object->replaceSingleArticle(176267));
+        $this->assertEquals(array("ОЛЬГА ГЕРМАН КИРЬЯНОВЫЙ"=>array('count'=>2, 'name'=>'Ольге Германовне Кирьяновой')), $this->object->replaceSingleArticle(176267));
     }
 }

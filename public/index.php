@@ -9,4 +9,6 @@ require_once 'vendor/autoload.php';
 
 ConnectDb::mySql(require "config/connectDb.php");
 $run = new NameFinder();
-$run->replaceSingleArticle(176267);
+//$run->replaceSingleArticle(176267);
+$run2 = $run->replaceAllArticle(13496, 52203);
+var_dump($run2);
