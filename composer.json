@@ -15,6 +15,7 @@
 	"classmap":[
 	    "src/Finders",
             "src/DB",
+            "src/Counters",
             "lib/phpmorphy/src",
             "config"
 	]

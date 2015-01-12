@@ -6,6 +6,7 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'NameFindProject\\src\\Counters\\WordCounter' => $baseDir . '/src/Counters/WordCounter.php',
     'NameFindProject\\src\\DB\\ConnectDb' => $baseDir . '/src/DB/ConnectDb.php',
     'NameFindProject\\src\\DB\\DbWork' => $baseDir . '/src/DB/DbWork.php',
     'NameFindProject\\src\\Finders\\NameFinder' => $baseDir . '/src/Finders/NameFinder.php',

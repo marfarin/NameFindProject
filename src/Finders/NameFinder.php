@@ -59,11 +59,11 @@ class NameFinder
             if (\array_key_exists($baseWord, $resultArray)) {
                 $resultArray[$baseWord]['count']++;
                 $resultArray[$baseWord]['name'] = $word;
-                
+                DbWork::updateNameData($baseWord, $resultArray[$baseWord]['count'], $word);
             } else {
                 $resultArray[$baseWord]['count'] = 1;
                 $resultArray[$baseWord]['name'] = $word;
-                
+                DbWork::insertNameData($baseWord, 1, $word);
             }
         }
         //var_dump($resultArray);
@@ -76,7 +76,7 @@ class NameFinder
         //DbWork::instance(require "../config/connectDb.php");
         $rawResult = DbWork::selectOneArticle($articleId);
         $rawResult['content'] = \html_entity_decode($rawResult['content']);
-        //print_r($rawResult);
+        print_r($rawResult);
         $resultWithoutCompany = preg_replace('/(«(.*)»)/U', '', $rawResult['content']);
         //print_r($resultWithoutCompany);
         //var_dump($resultWithoutCompany);
@@ -110,7 +110,7 @@ class NameFinder
             $resultWithoutCompany = preg_replace('/(«(.*)»)/U', '', $rawResultValue['content']);
             //print_r($resultWithoutCompany);
             //var_dump($resultWithoutCompany);
-            $pattern = "/[А-ЯA-Z]+[а-я]+[\s]+[А-ЯA-Z]+[а-я]+[\s]+[А-ЯA-Z]+[а-я]+|[А-ЯA-Z]+[а-я]+[\s]+[А-ЯA-Z]+[а-я]+|[А-ЯA-Z]+[а-я]+|[А-Я]{1}\.[\s]+[А-ЯA-Z]{1}\.[\s]+[А-Я]+[а-я]+|[А-ЯA-Z]{1}\.[\s]+[А-Я]+[а-я]+/u";
+            $pattern = "/[А-ЯA-Z]{1}[а-я]+[\s]+[А-ЯA-Z]{1}[а-я]+[\s]+[А-ЯA-Z]{1}[а-я]+|[А-ЯA-Z]{1}[а-я]+[\s]+[А-ЯA-Z]{1}[а-я]+|[А-ЯA-Z]{1}[а-я]+|[А-Я]{1}\.[\s]+[А-ЯA-Z]{1}\.[\s]+[А-Я]{1}[а-я]+|[А-ЯA-Z]{1}\.[\s]+[А-Я]{1}[а-я]+/u";
             preg_match_all($pattern, $resultWithoutCompany, $this->namesArray);
 
             //var_dump($resultArray);
