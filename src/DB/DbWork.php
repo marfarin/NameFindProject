@@ -68,46 +68,78 @@ class DbWork
         )->fetchAll()[0]['id'];
     }
     
-    public static function insertNameData($keyLFS, $count, $lastLFS)
+    public static function insertWordDataMem($keyLFS, $count, $isUpperCase)
     {
-        var_dump("INSERT INTO names (LFS, count, lastLFS) values ('$keyLFS', '$count', '$lastLFS')");
+        //var_dump("INSERT INTO words (word, count, isOnlyUpper) values ('$keyLFS', '$count', '$isUpperCase')");
         return ConnectDb::mySql()->exec(
-            "INSERT INTO names (LFS, count, lastLFS) values ('$keyLFS', '$count', '$lastLFS')"
-        ) or die(print_r(ConnectDb::mySql()->errorInfo(), true));
+            "INSERT INTO wordsMemory (word, count, isOnlyUpper)"
+            . " values ('$keyLFS', '$count', '$isUpperCase')"
+            . " ON DUPLICATE KEY UPDATE count = count + 1;"
+        );
         
     }
-    
-    public static function updateNameData($keyLFS, $count, $lastLFS)
-    {
-        var_dump("UPDATE names SET count = '$count', lastLFS = '$lastLFS' WHERE LFS = '$keyLFS'");
-        return ConnectDb::mySql()->exec(
-            "UPDATE names SET count = '$count', lastLFS = '$lastLFS' WHERE LFS = '$keyLFS'"
-        ) or die(print_r(ConnectDb::mySql()->errorInfo(), true));
-    }
-    
-    public static function insertWordData($keyLFS, $count)
-    {
-        var_dump("INSERT INTO words (word, count) values ('$keyLFS', '$count')");
-        return ConnectDb::mySql()->exec(
-            "INSERT INTO words (word, count) values ('$keyLFS', '$count')"
-        ) or die(print_r(ConnectDb::mySql()->errorInfo(), true));
-        
-    }
-    
-    public static function updateWordData($keyLFS, $count)
-    {
-        var_dump("UPDATE words SET count = '$count' WHERE word = '$keyLFS'");
-        return ConnectDb::mySql()->exec(
-            "UPDATE words SET count = '$count' WHERE word = '$keyLFS'"
-        ) or die(print_r(ConnectDb::mySql()->errorInfo(), true));
-    }
-    
-    public static function selectCountWord($word)
+     
+    public static function selectCountWordMem($word)
     {
         return ConnectDb::mySql()->query(
-            "SELECT IFNULL(t1.count,0) as count FROM words t1 where t1.word = '$word'",
+            "SELECT IFNULL(t1.count,0) as count FROM wordsMemory t1 where t1.word = '$word'",
             \PDO::FETCH_ASSOC
         )->fetchAll();
 
+    }
+    
+    public static function selectAllWordsMem()
+    {
+        return ConnectDb::mySql()->query(
+            "SELECT * FROM wordsMemory t1 where 1",
+            \PDO::FETCH_ASSOC
+        )->fetchAll();
+
+    }
+    
+    public static function insertWordData($keyLFS, $count, $isUpperCase)
+    {
+        //var_dump("INSERT INTO words (word, count, isOnlyUpper) values ('$keyLFS', '$count', '$isUpperCase')");
+        return ConnectDb::mySql()->exec(
+            "INSERT INTO words (word, count, onlyUpperCase) values ('$keyLFS', '$count', '$isUpperCase')"
+        );
+        
+    }
+
+    public static function selectlowerWords($word)
+    {
+        //var_dump("INSERT INTO names (LFS, count, lastLFS) values ('$keyLFS', '$count', '$lastLFS')");
+        return ConnectDb::mysql()->query(
+            "SELECT * FROM words WHERE word = '$word'",
+            \PDO::FETCH_ASSOC
+        )->fetchAll();
+        
+    }
+    
+    public static function insertNameDataMem($keyLFS, $count, $lastLFS)
+    {
+        //var_dump("INSERT INTO names (LFS, count, lastLFS) values ('$keyLFS', '$count', '$lastLFS')");
+        return ConnectDb::mySql()->exec(
+            "INSERT INTO namesMemory (LFS, count, lastLFS) values ('$keyLFS', '$count', '$lastLFS') ON DUPLICATE KEY UPDATE count = count + 1;"
+        ) or die(print_r(ConnectDb::mySql()->errorInfo(), true));
+        
+    }
+    
+    public static function selectAllNamesMem()
+    {
+        return ConnectDb::mySql()->query(
+            "SELECT * FROM namesMemory WHERE 1",
+            \PDO::FETCH_ASSOC
+        )->fetchAll();
+
+    }
+    
+    public static function insertNameData($keyLFS, $count, $lastLFS)
+    {
+        //var_dump("INSERT INTO names (LFS, count, lastLFS) values ('$keyLFS', '$count', '$lastLFS')");
+        return ConnectDb::mySql()->exec(
+            "INSERT INTO names (LFS, count, lastLFS) values ('$keyLFS', '$count', '$lastLFS')"
+        );
+        
     }
 }

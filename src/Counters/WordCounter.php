@@ -17,7 +17,6 @@ use NameFindProject\src\DB\DbWork;
  */
 class WordCounter
 {
-    private $words = array();
     private $start;
     private $finish;
     
@@ -36,12 +35,6 @@ class WordCounter
             
     }
 
-
-    public function getWords()
-    {
-        return $this->words;
-    }
-    
     public function getReplacePattern()
     {
         $replacePattern = "";
@@ -54,30 +47,36 @@ class WordCounter
         $tmp = array();
         $rawResult = DbWork::selectRangeArticle($this->start, $this->finish);
         foreach ($rawResult as $rawResultValue) {
-            $tmpDecode = \html_entity_decode($rawResultValue['content']);
-            $tmpDecode = \strip_tags($tmpDecode);
-            //print_r($tmpDecode);
-            $tmpReplace = preg_replace("/[\d]/u", '', $tmpDecode);
-            //print_r($tmpReplace);
-            
-            $tmp = preg_split("/[\s\W]+/u", $tmpReplace);
-            print_r($tmp);
-            foreach ($tmp as $word) {
-                $value = \mb_strtolower($word, 'UTF-8');
-                $count = DbWork::selectCountWord($value);
-                //var_dump($count);
-                if ($count==null) {
-                    //$this->words[$value] = 1;
-                    DbWork::insertWordData($value, 1);
-                } else {
-                    //$this->words[$value]++;
-                    //var_dump($count[0]['count']);
-                    $count[0]['count']++;
-                    DbWork::updateWordData($value, (int)$count[0]['count']);
-                }
+            var_dump($rawResultValue['id']);
+            //$tmpDecode = \html_entity_decode($rawResultValue['content']);
+            //$tmpStripped = \strip_tags($tmpDecode);
+            //$tmpReplace = preg_replace("/[\d\p{P}\p{S}]/u", '', $tmpStripped);
+            preg_match_all("/\b[а-я]{3,}/u", $rawResultValue['content'], $tmp);
+            //var_dump($tmp);
+            foreach ($tmp[0] as $word) {
+                //var_dump($word);
+                $this->calculateWordStatistic($word);
             }
         }
+        $this->sendDataFromMemToDb();
         return 0;
     }
-    //put your code here
+      
+    private function calculateWordStatistic($word)
+    {
+        $value = \mb_strtolower($word, 'UTF-8');
+        DbWork::insertWordDataMem($value, 1, 1);
+    }
+    
+    private function sendDataFromMemToDb()
+    {
+        var_dump("Начало сброса БД");
+        $data = DbWork::selectAllWordsMem();
+        \NameFindProject\src\DB\ConnectDb::mySql()->beginTransaction();
+        foreach ($data as $value) {
+            DbWork::insertWordData($value['word'], $value['count'], $value['isOnlyUpper']);
+        }
+        \NameFindProject\src\DB\ConnectDb::mySql()->commit();
+        
+    }
 }
