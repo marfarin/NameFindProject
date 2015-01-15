@@ -16,6 +16,7 @@
 	    "src/Finders",
             "src/DB",
             "src/Counters",
+            "src/Simplification",
             "lib/phpmorphy/src",
             "config"
 	]

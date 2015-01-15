@@ -142,4 +142,74 @@ class DbWork
         );
         
     }
+    
+    public static function findNamesOnOneWordName($word1)
+    {
+        return ConnectDb::mySql()->query(
+            "SELECT * FROM namesMemory WHERE LFS LIKE '%".$word1."%' AND LFS<>'"
+            .$word1."';",
+            \PDO::FETCH_ASSOC
+        )->fetchAll();
+    }
+    
+    public static function findAllOneWordName()
+    {
+        return ConnectDb::mySql()->query(
+            "SELECT * FROM namesMemory WHERE LFS REGEXP '^[А-Я]+$';",
+            \PDO::FETCH_ASSOC
+        )->fetchAll();
+    }
+    
+    public static function findThreeWordName($word1, $word2, $baseName)
+    {
+        $res = "SELECT * FROM namesMemory WHERE LFS LIKE '%".$word1."%".$word2.
+            "%' AND LFS<>'".$baseName."';";
+        var_dump($res);
+        return ConnectDb::mySql()->query($res, \PDO::FETCH_ASSOC)->fetchAll();
+    }
+    
+    public static function findAllTwoWordName()
+    {
+        return ConnectDb::mySql()->query(
+            "SELECT * FROM namesMemory WHERE LFS REGEXP '^[А-Я]+( )[А-Я]+$';",
+            \PDO::FETCH_ASSOC
+        )->fetchAll();
+    }
+    
+    public static function incrementCountReference($word, $count)
+    {
+        $res = "UPDATE namesMemory SET count = count+'$count' WHERE LFS = '$word';";
+        var_dump($res);
+        return ConnectDb::mySql()->exec($res);
+    }
+    
+    public static function deleteFalseName($word)
+    {
+        $res = "DELETE FROM namesMemory WHERE LFS = '$word';";
+        var_dump($res);
+        return ConnectDb::mySql()->exec($res);
+    }
+    
+    public static function clearNamesMem()
+    {
+        var_dump("Очистка таблицы namesMemory");
+        return ConnectDb::mySql()->exec(
+            "TRUNCATE `namesMemory`;"
+        );
+    }
+    
+    public static function clearNames()
+    {
+        var_dump("Очистка таблицы names");
+        return ConnectDb::mySql()->exec(
+            "TRUNCATE `names`;"
+        );
+    }
+    
+    public static function loadNamesMem()
+    {
+        return ConnectDb::mySql()->exec(
+            "INSERT INTO `namesMemory` SELECT * FROM names;"
+        );
+    }
 }
