@@ -6,6 +6,8 @@ use NameFindProject\src\Simplification\SimplificationName;
 
 use NameFindProject\src\Finders\OrganisationFinder;
 
+use phpMorphy;
+
 chdir(dirname(__DIR__));
 set_include_path(dirname(__DIR__));
 //echo get_include_path();
@@ -18,7 +20,7 @@ require_once 'vendor/autoload.php';
 
 ConnectDb::mySql(require "config/connectDb.php");
 $run = new NameFinder();
-$run2 = $run->replaceAllArticle(324400, 327071);
+$run2 = $run->replaceAllArticle(326262, 327071);
 
 //$runn = new WordCounter(13496, 51200);
 //$runn2 = $runn->getReplacePattern();

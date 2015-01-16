@@ -36,7 +36,7 @@ class NameFinder
             if ($word) {
                 $replasedWords[$key] = $this->morphy->lemmatize(mb_strtoupper($value, 'UTF-8'), phpMorphy::NORMAL);
             } else {
-                $replasedWords[$key] = array($value);
+                $replasedWords[$key] = array(mb_strtoupper($value, 'UTF-8'));
             }
             if ($first === false && $key != end($replasedWords)) {
                 $newWordLemm.= " ";
@@ -144,13 +144,21 @@ class NameFinder
         //var_dump($splittedValue);
         foreach ($splittedValue as $value) {
             $existSmallWord = DbWork::selectlowerWords($value);
-            if (empty($existSmallWord)) {
+            //$baseValue = $this->getBaseFormWord($value);
+            $existSity = array();//DbWork::selectSityWords($value, 1);
+            if (empty($existSmallWord) && empty($existSity)) {
                 if ($first===false) {
                     $resultValue .=" ".$value;
                 } else {
                     $resultValue .= $value;
                 }
                 $first = false;
+            } else {
+                //var_dump($value);
+                if (!empty($existSity)) {
+                    DbWork::insertDeletedData($value);
+                }
+                
             }
         }
         

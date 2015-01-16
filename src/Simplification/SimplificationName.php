@@ -51,6 +51,7 @@ class SimplificationName
     {
         DbWork::clearNamesMem();
         DbWork::loadNamesMem();
+        DbWork::deleteFalseMemWords();
         $twoWordsNames = DbWork::findAllTwoWordName();
         //var_dump($twoWordsNames);
         foreach ($twoWordsNames as $twoValue) {

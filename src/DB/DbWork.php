@@ -116,6 +116,18 @@ class DbWork
         
     }
     
+    
+    public static function selectSityWords($word, $baseWord)
+    {
+        //var_dump("INSERT INTO names (LFS, count, lastLFS) values ('$keyLFS', '$count', '$lastLFS')");
+        $res = "SELECT * FROM "
+            . "regionMemNN t1 "
+            . "WHERE t1.name = '{$word}' "
+            . "OR t1.baseFormName = '{$baseWord}';";
+        return ConnectDb::mysql()->query($res, \PDO::FETCH_ASSOC)->fetchAll();
+        
+    }
+    
     public static function insertNameDataMem($keyLFS, $count, $lastLFS)
     {
         //var_dump("INSERT INTO names (LFS, count, lastLFS) values ('$keyLFS', '$count', '$lastLFS')");
@@ -129,6 +141,16 @@ class DbWork
     {
         return ConnectDb::mySql()->query(
             "SELECT * FROM namesMemory WHERE 1",
+            \PDO::FETCH_ASSOC
+        )->fetchAll();
+
+    }
+    
+    
+    public static function selectAllSityMem()
+    {
+        return ConnectDb::mySql()->query(
+            "SELECT * FROM regionMemNN WHERE 1",
             \PDO::FETCH_ASSOC
         )->fetchAll();
 
@@ -210,5 +232,25 @@ class DbWork
         return ConnectDb::mySql()->exec(
             "INSERT INTO `namesMemory` SELECT * FROM names;"
         );
+    }
+    
+    public static function deleteFalseMemWords()
+    {
+        $res = "DELETE FROM namesMemory WHERE LFS LIKE '__';";
+        $res2 = "DELETE FROM namesMemory WHERE LFS LIKE '__ __';";
+        $res3 = "DELETE FROM namesMemory WHERE LFS = (SELECT word FROM exeptWords WHERE 1);";
+        var_dump($res);
+        ConnectDb::mySql()->exec($res2);
+        ConnectDb::mySql()->exec($res3);
+        return ConnectDb::mySql()->exec($res);
+    }
+    
+    public static function insertDeletedData($word)
+    {
+        //var_dump("INSERT INTO names (LFS, count, lastLFS) values ('$keyLFS', '$count', '$lastLFS')");
+        return ConnectDb::mySql()->exec(
+            "INSERT INTO exeptWords (word) values ('$word')"
+        );
+        
     }
 }
