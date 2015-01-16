@@ -111,6 +111,7 @@ class NameFinder
             $rawResultValue['content'] = \html_entity_decode($rawResultValue['content']);
             //print_r($rawResultValue['content']);
             $resultWithoutCompany = preg_replace('/(«(.*)»)/U', '', $rawResultValue['content']);
+            $resultWithoutCompany = preg_replace('/(((улиц|посел|сел|город|проспект|деревн)(ы|ка|оа|ов|и|я|))|(пос\.|ул\.|с\.|г\.|пр\.|просп\.|д\.))[\s]([А-Я]{1}[А-Яа-я-]+)/u', '', $resultWithoutCompany);
             //print_r($resultWithoutCompany);
             //var_dump($resultWithoutCompany);
             $pattern = "/[А-ЯA-Z]{1}[а-я]+[\s]+[А-ЯA-Z]{1}[а-я]+[\s]+[А-ЯA-Z]{1}[а-я]+|[А-ЯA-Z]{1}[а-я]+[\s]+[А-ЯA-Z]{1}[а-я]+|[А-ЯA-Z]{1}[а-я]+|[А-Я]{1}\.[\s]+[А-ЯA-Z]{1}\.[\s]+[А-Я]{1}[а-я]+|[А-ЯA-Z]{1}\.[\s]+[А-Я]{1}[а-я]+/u";

@@ -152,12 +152,11 @@ class DbWork
         )->fetchAll();
     }
     
-    public static function findAllOneWordName()
+    public static function findAllOneWordName($baseName)
     {
-        return ConnectDb::mySql()->query(
-            "SELECT * FROM namesMemory WHERE LFS REGEXP '^[А-Я]+$';",
-            \PDO::FETCH_ASSOC
-        )->fetchAll();
+        $res = "SELECT * FROM namesMemory WHERE LFS REGEXP '^".$baseName."[А-Я]{0,3}$';";
+        var_dump($res);
+        return ConnectDb::mySql()->query($res, \PDO::FETCH_ASSOC)->fetchAll();
     }
     
     public static function findThreeWordName($word1, $word2, $baseName)

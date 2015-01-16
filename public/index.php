@@ -4,6 +4,8 @@ use NameFindProject\src\DB\ConnectDb;
 use NameFindProject\src\Counters\WordCounter;
 use NameFindProject\src\Simplification\SimplificationName;
 
+use NameFindProject\src\Finders\OrganisationFinder;
+
 chdir(dirname(__DIR__));
 set_include_path(dirname(__DIR__));
 //echo get_include_path();
@@ -15,14 +17,17 @@ require_once 'vendor/autoload.php';
 
 
 ConnectDb::mySql(require "config/connectDb.php");
-//$run = new NameFinder();
-//$run2 = $run->replaceAllArticle(13495, 327071);
+$run = new NameFinder();
+$run2 = $run->replaceAllArticle(324400, 327071);
 
 //$runn = new WordCounter(13496, 51200);
 //$runn2 = $runn->getReplacePattern();
 
 $runnn = new SimplificationName();
 $runnn2 = $runnn->simplificationTableNames();
+
+//$runnnn = new OrganisationFinder();
+//$runnnn2 = $runnnn->replaceAllOrganisation(13496, 51200);
 
 $time = round(microtime(true) - $time, 3);
 echo 'Завершено удачно. Использованно памяти - '

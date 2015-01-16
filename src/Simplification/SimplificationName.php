@@ -34,10 +34,16 @@ class SimplificationName
     
     private function simplificOneWordsName($baseName)
     {
-        $allTwoWordNames = DbWork::findNamesOnOneWordName($baseName['LFS']);
-        foreach ($allTwoWordNames as $value) {
-            DbWork::incrementCountReference($value['LFS'], $baseName['count']);
-            DbWork::deleteFalseName($baseName['LFS']);
+        $splittedBaseName = preg_split("/[\s]/u", $baseName['LFS']);
+        $oneWordsForFirst = DbWork::findAllOneWordName($splittedBaseName[0]);
+        foreach ($oneWordsForFirst as $value) {
+            DbWork::incrementCountReference($baseName['LFS'], $value['count']);
+            DbWork::deleteFalseName($value['LFS']);
+        }
+        $oneWordsForSecond = DbWork::findAllOneWordName($splittedBaseName[1]);
+        foreach ($oneWordsForSecond as $value) {
+            DbWork::incrementCountReference($baseName['LFS'], $value['count']);
+            DbWork::deleteFalseName($value['LFS']);
         }
     }
     
@@ -50,14 +56,15 @@ class SimplificationName
         foreach ($twoWordsNames as $twoValue) {
             //var_dump($twoValue['id']);
             $this->simplificThreeWordsName($twoValue);
+            $this->simplificOneWordsName($twoValue);
         }
         
-        $oneWordsNames = DbWork::findAllOneWordName();
+        //$oneWordsNames = DbWork::findAllOneWordName();
         //var_dump($oneWordsNames);
-        foreach ($oneWordsNames as $oneValue) {
+        /*foreach ($oneWordsNames as $oneValue) {
             var_dump($oneValue['id']);
             $this->simplificOneWordsName($oneValue);
-        }
+        }*/
         
         DbWork::clearNames();
         $this->sendNamesFromMemToDb();
