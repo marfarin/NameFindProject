@@ -181,10 +181,18 @@ class DbWork
         return ConnectDb::mySql()->query($res, \PDO::FETCH_ASSOC)->fetchAll();
     }
     
+        public static function findOneWordName($baseName)
+    {
+        $res = "SELECT * FROM namesMemory WHERE LFS REGEXP '^[А-Я]+$';";
+        var_dump($res);
+        return ConnectDb::mySql()->query($res, \PDO::FETCH_ASSOC)->fetchAll();
+    }
+    
     public static function findThreeWordName($word1, $word2, $baseName)
     {
-        $res = "SELECT * FROM namesMemory WHERE LFS LIKE '%".$word1."%".$word2.
-            "%' AND LFS<>'".$baseName."';";
+        $res = "SELECT * FROM namesMemory WHERE (LFS LIKE '%".$word1."%".$word2.
+            "%' OR LFS LIKE '%".$word2."%".$word1.
+            "%') AND LFS<>'".$baseName."';";
         var_dump($res);
         return ConnectDb::mySql()->query($res, \PDO::FETCH_ASSOC)->fetchAll();
     }
@@ -193,6 +201,18 @@ class DbWork
     {
         return ConnectDb::mySql()->query(
             "SELECT * FROM namesMemory WHERE LFS REGEXP '^[А-Я]+( )[А-Я]+$';",
+            \PDO::FETCH_ASSOC
+        )->fetchAll();
+    }
+    
+    
+    public static function isCity()
+    {
+        return ConnectDb::mySql()->query(
+            "(select LFS from names t1 INNER JOIN regionNN t2
+ON t1.LFS REGEXP concat('^[А-Я]*',t2.baseFormName,'[А-Я]*$') OR t1.LFS LIKE (t2.name)
+WHERE 1 GROUP BY t1.id)
+UNION (SELECT word as LFS FROM exeptWords);",
             \PDO::FETCH_ASSOC
         )->fetchAll();
     }
@@ -236,7 +256,7 @@ class DbWork
     
     public static function deleteFalseMemWords()
     {
-        $res = "DELETE FROM namesMemory WHERE LFS LIKE '__';";
+        $res = "DELETE FROM namesMemory WHERE LFS LIKE '__' OR FS LIKE '_';";
         $res2 = "DELETE FROM namesMemory WHERE LFS LIKE '__ __';";
         $res3 = "DELETE FROM namesMemory WHERE LFS = (SELECT word FROM exeptWords WHERE 1);";
         var_dump($res);

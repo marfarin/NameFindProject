@@ -50,21 +50,12 @@ class NameFinder
     }
 
 
-    private function wordExistsOnDictionary($word, &$resultArray)
+    private function wordExistsOnDictionary($word)
     {
         $this->morphy->lemmatize(mb_strtoupper($word, 'UTF-8'), phpMorphy::NORMAL);
         if ($this->morphy->isLastPredicted()) {
             $baseWord = $this->getBaseFormWord($word);
             //var_dump($this->morphy->isLastPredicted());
-            if (\array_key_exists($baseWord, $resultArray)) {
-                $resultArray[$baseWord]['count']++;
-                $resultArray[$baseWord]['name'] = $word;
-                //DbWork::updateNameData($baseWord, $resultArray[$baseWord]['count'], $word);
-            } else {
-                $resultArray[$baseWord]['count'] = 1;
-                $resultArray[$baseWord]['name'] = $word;
-                //DbWork::insertNameData($baseWord, 1, $word);
-            }
             DbWork::insertNameDataMem($baseWord, 1, $word);
         }
         //var_dump($resultArray);
@@ -100,29 +91,19 @@ class NameFinder
     
     public function replaceAllArticle($articleId1, $articleId2)
     {
-        //DbWork::instance(require "/home/stager3/workspace/NameFindProject/config/connectDb.php");
-        $resultArray = array();
-        //DbWork::instance(require "../config/connectDb.php");
         $rawResult = DbWork::selectRangeArticle($articleId1, $articleId2);
-        //var_dump($rawResult);
         foreach ($rawResult as $rawResultValue) {
-            //$i++;
             var_dump($rawResultValue['id']);
             $rawResultValue['content'] = \html_entity_decode($rawResultValue['content']);
-            //print_r($rawResultValue['content']);
             $resultWithoutCompany = preg_replace('/(«(.*)»)/U', '', $rawResultValue['content']);
             $resultWithoutCompany = preg_replace('/(((улиц|посел|сел|город|проспект|деревн)(ы|ка|оа|ов|и|я|))|(пос\.|ул\.|с\.|г\.|пр\.|просп\.|д\.))[\s]([А-Я]{1}[А-Яа-я-]+)/u', '', $resultWithoutCompany);
-            //print_r($resultWithoutCompany);
-            //var_dump($resultWithoutCompany);
             $pattern = "/[А-ЯA-Z]{1}[а-я]+[\s]+[А-ЯA-Z]{1}[а-я]+[\s]+[А-ЯA-Z]{1}[а-я]+|[А-ЯA-Z]{1}[а-я]+[\s]+[А-ЯA-Z]{1}[а-я]+|[А-ЯA-Z]{1}[а-я]+|[А-Я]{1}\.[\s]+[А-ЯA-Z]{1}\.[\s]+[А-Я]{1}[а-я]+|[А-ЯA-Z]{1}\.[\s]+[А-Я]{1}[а-я]+/u";
             preg_match_all($pattern, $resultWithoutCompany, $this->namesArray);
-            //var_dump("сиськи");
-            //var_dump($resultArray);
             foreach ($this->namesArray[0] as $value) {
                 //var_dump(mb_strtoupper($value, 'UTF-8'));
                 $filterValue = $this->testValue($value);
                 if ($filterValue!="") {
-                    $this->wordExistsOnDictionary($filterValue, $resultArray);
+                    $this->wordExistsOnDictionary($filterValue);
                 }
             }
         }
@@ -144,21 +125,13 @@ class NameFinder
         //var_dump($splittedValue);
         foreach ($splittedValue as $value) {
             $existSmallWord = DbWork::selectlowerWords($value);
-            //$baseValue = $this->getBaseFormWord($value);
-            $existSity = array();//DbWork::selectSityWords($value, 1);
-            if (empty($existSmallWord) && empty($existSity)) {
+            if (empty($existSmallWord)) {
                 if ($first===false) {
                     $resultValue .=" ".$value;
                 } else {
                     $resultValue .= $value;
                 }
                 $first = false;
-            } else {
-                //var_dump($value);
-                if (!empty($existSity)) {
-                    DbWork::insertDeletedData($value);
-                }
-                
             }
         }
         
